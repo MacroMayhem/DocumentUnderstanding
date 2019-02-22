@@ -39,11 +39,11 @@ Let's hypothesize a pipeline we think will achieve the goal. I am listing these 
 
 1. **Text Detection module**: `Signature: text_detection(Image) -> {(x,y,del_x,, del_y,confidence)}` String is located in the rectangle on the image from pixel(x,y) to pixel(x+del_x,y+del_y). We don't know what the text is but we are very sure(**confidence**) there is some text there. We focus on the granularity at word level i.e. we are interested in knowing regions where there are words and not single characters or sentences. Possible errors the module might create are:
   
-  a. **False Positives**: The module might and will detect regions with no text as text
+    a. **False Positives**: The module might and will detect regions with no text as text
   
-  b. **False Negatives**: The module can and most likely will miss detections of texts in the image
+    b. **False Negatives**: The module can and most likely will miss detections of texts in the image
   
-  c. **Multiple Detection**: Detected a sentence as a string. For example, *Electronic item* can be detected as a single string even though the granularity we expect during the detection is at word level
+    c. **Multiple Detection**: Detected a sentence as a string. For example, *Electronic item* can be detected as a single string even though the granularity we expect during the detection is at word level
   
   We will focus in having a **high recall** as it might be possible to remove false positives later on in the pipeline however, if we miss a positive sample early on in the stage we will never be able to retrieve this infromation. 
   
@@ -51,9 +51,9 @@ Let's hypothesize a pipeline we think will achieve the goal. I am listing these 
 2. **Text Recognition Module**: `Signature: text_recognition(Image(x,y,del_x,del_y))->{[string, confidence]}` Given a patch of del_x,del_y in the image this module returns the word or sequence of words contained in the patch ordered by some confidence.
 Again, this module will be not a perfect module and some possible errors it might face are
   
-  a. **Miss-Spelled Words**: A word *burger* can be recognized as a *burgler* or a *bugger*. 
+    a. **Miss-Spelled Words**: A word *burger* can be recognized as a *burgler* or a *bugger*. 
   
-  b. **No Detections**: The algorithm might not even find a word, especially for cases when there were no text to begin with.Might even return a random string.
+    b. **No Detections**: The algorithm might not even find a word, especially for cases when there were no text to begin with.Might even return a random string.
 
  **Note:** For the exploratory work we are usign the Google Vision API which does the steps 1 and 2 or perhaps some other OCR or a collection of them. 
 
@@ -67,7 +67,9 @@ Again, this module will be not a perfect module and some possible errors it migh
 We will be collecting data for [Company names](https://datahub.io/core/nasdaq-listings), [Goods](), [Location](https://github.com/datasets/world-cities), synthesize from [Dates](https://docs.oracle.com/cd/E41183_01/DR/Date_Format_Types.html) 
 
 We will start of with content categorization. The input is a *block(sequence of space separated strings)* 
+
 **About the Data** we have with us necessarily *text* data with us. 
+
 **Approaches for individual classes** 
 
 1. First Approach which comes to mind is using Named Entity Recognition or perhaps at a deeper level as Part of Speech Tagging. Here given a sequence of strings for NER we map each word to Name, Organiztion, Date etc. But it has few problems. We don't know how the sentences will come in for the inference and hence the construction of training data is not well defined. We can also have Out of Vocabulary words as oraganization names, good etc, if we dont have a proper domain corpus and as a result we wont be able to provide good labelling at test.
