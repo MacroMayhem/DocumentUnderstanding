@@ -81,8 +81,8 @@ It seems now that we have defined heuristics for 2 classes but are still left wi
 ##### NER
 Lets start by analysing the performance of **Name, Location, Type of Good and Date(We can choose a regex or NER)**
 
-| Method | Qualitative assessment |
-| --- | --- |
-| NLTK NER (Case-Sensitive)|     |
+| Method | Qualitative Validation Assessment | Quantitative Assessment |
+| --- | --- | --- |
+| NLTK NER (Case-Sensitive)|     |  |
 
 
