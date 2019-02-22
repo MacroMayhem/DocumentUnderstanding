@@ -11,10 +11,10 @@ For now it's safe to assume
 * I only contains computer generated text i.e. no hand-written content
 * Different classes of interest in the content of the receipts are
   * Date of purchase
-  * Name (Customer Name)
-  * Company (Seller's Name)
+  * Name (Company Name)
+  * Location 
   * Receipt number (Some ID: 1270348, or ABC123DEF)
-  * Type of good (electronic, food stuff etc.)
+  * Physical goods (electronic, food stuff, toys etc.)
   * others (Anything which is doesn't fall into above mentioend categories)
 
 ### Data
@@ -22,7 +22,7 @@ We describe the data we have for the job and then move ahead on creating a pipel
 
 ##### Details
 
-1. Synthetic generation of datasets corresponding to **Dates, Locations, Name, IDs, Goods, Company, Others**
+1. Synthetic generation of datasets corresponding to **Dates, Locations, Company Name, IDs, Goods, Others**
 2. If possible collection of easily available datasets mentioned above and mixing both
 
 *Future Work* For document images we currently don't have an easily available dataset. Might have to stick to augmenting it
@@ -63,9 +63,26 @@ Again, this module will be not a perfect module and some possible errors it migh
 
 
 ### Content Categorization
+##### Data collection
+We will be collecting data for [Company names](https://datahub.io/core/nasdaq-listings), [Goods](), [Location](https://github.com/datasets/world-cities), synthesize from [Dates](https://docs.oracle.com/cd/E41183_01/DR/Date_Format_Types.html) 
+
 We will start of with content categorization. The input is a *block(sequence of space separated strings)* 
 **About the Data** we have with us necessarily *text* data with us. 
 **Approaches for individual classes** 
 
 1. First Approach which comes to mind is using Named Entity Recognition or perhaps at a deeper level as Part of Speech Tagging. Here given a sequence of strings for NER we map each word to Name, Organiztion, Date etc. But it has few problems. We don't know how the sentences will come in for the inference and hence the construction of training data is not well defined. We can also have Out of Vocabulary words as oraganization names, good etc, if we dont have a proper domain corpus and as a result we wont be able to provide good labelling at test.
+2. We can use rule based approaches for few of the categories such as Date i.e. construct a regex which matches with some predefined structure of date. This will be a knowledge driven methd and hence if we encounter a new date format the method will most likely fail. 
+3. Embedding approaches might potentially fail due to the OOV words during test.
+4. For ReceiptID(Random String) we can define a rule of acceptance if a unit length string is not classified as Name, Type, Location or Date. Composing of alphanumerics only.
+5. Everything not belonging to the *5* classes goes to Others.
+
+It seems now that we have defined heuristics for 2 classes but are still left with 3 classes. Namely, *Name, Location, Type of Good*. Even though we might get some bad performance on validation/tests NER by Standford is a good way to start.
+
+##### NER
+Lets start by analysing the performance of **Name, Location, Type of Good and Date(We can choose a regex or NER)**
+
+| Method | Qualitative assessment |
+| --- | --- |
+| NLTK NER (Case-Sensitive)|     |
+
 
