@@ -30,22 +30,22 @@ We describe the data we have for the job and then move ahead on creating a pipel
 ##### Data Cleaning
  
  1. __Companies__ : 
-   * We sample roughly 20000 company names from the dataset
-   * We remove stopwords, keep only alphanumerics and convert all to lower case
-   * We split words on space character and add it to the training
+   * Randomly sample 20000 company names from the dataset
+   * Remove stopwords, keep only alphanumerics and convert all to lower case
+   * Split words on the space character and add individual words to training
  
  2. __Location__ : 
-   * We sample 10000 cities from the data 
-   * We keep all the country names for training
+   * Randomly sample 10000 cities from the data 
+   * All the country names are added for training
    * Convert all strings to lowercase and remove special chars if necessary
  
  3. __Goods__ :
-   * We use the 'product_category_tree' to obtain the hierarchy for every item.
-   * We process each element of the hierarchy in a similar fashion. With removeal of stop words, lowercaseing, and removing specia characters
+   * Use the 'product_category_tree' to obtain the hierarchy for every item.
+   * Process each element of the hierarchy in a similar fashion. Removal of stop words, lowercasing, and removing special characters
  
 ##### Feature Respresentation
 
-We utilise [FastText](https://fasttext.cc/) based representation for words. It is advantageous to use over _word2vec_ as it can tolerate _Out of Vocabulary_ words due to it's character level n-gram formulation. We train a _Fasttext_ model which yields __50__ dimensional representation for a word. 
+We utilise [FastText](https://fasttext.cc/) based representation for words. It is better to use over _word2vec_ as it can tolerate _Out of Vocabulary_ words due to it's character level n-gram formulation. We train a _Fasttext_ model which yields __50__ dimensional representation for a word. 
  
 
 ### Pipeline
@@ -72,7 +72,11 @@ Again, this module will be not a perfect module and some possible errors it migh
 
 3. *Future Work* **Alignment Module**: `Signature: alignment([(x,y,word)..]) -> [ordering]` This module provides the most likely ordering of the texts. Sample figure provides the insight on the working. During the initial exploratory work we will drop the idea of implementing it due to the lack of GT. We can comeup with strategy to synthesize the data for example starting with some random layout generation and populating it randomly with corpuses we have, but for the time being we will ignroe this module.
 
-4. **Content Categorization**: `Signature: categorize([Block]) -> [confidence_class_0,class_1,..class_5]` Block can be a single string or a sequence of strings. In this part we will feed the **individual** strings from the **block** obtained in **step 2** to the system and obtain a probability of the assignment variable over the **6** classes (if possible else its a 1-hot encoding). We can then compute the probability of the block for each class as *insert image here*. We can then depending on the values classify the text block multiple classes if need be and this would hint us at breaking and analysing the block even further.
+4. **Content Categorization**: `Signature: categorize(String) -> [confidence_class_0,class_1,..class_5]`
+        * Company, Location, GoodsType: We train classifiers for each individually while keeping data from the other two classes as negatives. 
+        * Dates: We make use of `parse from dateutil.parser` to check if a string is a date or not
+        * Random String: Regex matching using `^[a-zA-Z0-9-/]+$` as the pattern
+        * Others: Anything which is not accepted by the previous methods will be classified as `Others`
 
 
 
