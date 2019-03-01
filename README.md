@@ -73,6 +73,7 @@ Again, this module will be not a perfect module and some possible errors it migh
 3. *Future Work* **Alignment Module**: `Signature: alignment([(x,y,word)..]) -> [ordering]` This module provides the most likely ordering of the texts. Sample figure provides the insight on the working. During the initial exploratory work we will drop the idea of implementing it due to the lack of GT. We can comeup with strategy to synthesize the data for example starting with some random layout generation and populating it randomly with corpuses we have, but for the time being we will ignroe this module.
 
 4. **Content Categorization**: `Signature: categorize(String) -> [confidence_class_0,class_1,..class_5]`
+        
         * Company, Location, GoodsType: We train classifiers for each individually while keeping data from the other two classes as negatives. 
         * Dates: We make use of `parse from dateutil.parser` to check if a string is a date or not
         * Random String: Regex matching using `^[a-zA-Z0-9-/]+$` as the pattern
