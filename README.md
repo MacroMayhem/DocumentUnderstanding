@@ -24,8 +24,8 @@ We describe the data we have for the job and then move ahead on creating a pipel
 ##### Data Collection
 
  *  Companies [1](https://www.kaggle.com/dattapiy/sec-edgar-companies-list) [2](https://www.kaggle.com/Eruditepanda/fortune-1000-2018)
- *  [Locations] (https://datahub.io/core/world-cities)
- *  [Goods] (https://www.kaggle.com/PromptCloudHQ/flipkart-products)
+ *  [Locations](https://datahub.io/core/world-cities)
+ *  [Goods](https://www.kaggle.com/PromptCloudHQ/flipkart-products)
 
 ##### Data Cleaning
  
