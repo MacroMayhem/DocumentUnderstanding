@@ -16,10 +16,10 @@ class FeatureBuilder:
         self.word_mapping = {}
 
     def load_model(self):
+        self.load_data()
         try:
-            self.feature_encoder = FastText.load('./model/fasttext.model')
+            self.feature_encoder = FastText.load('./models/fasttext.model')
         except:
-            self.load_data()
             self.train_fasttext_encoder()
             self.validate_encoder()
 
@@ -27,8 +27,7 @@ class FeatureBuilder:
         data = []
         datasets = [get_company_data(),get_location_data(),get_items_cat()]
         for idx, dataset in enumerate(datasets):
-            print(dataset.head())
-            print('Is Null any entry?:',dataset.isnull().values.any())
+            print('Is any entry Null?:',dataset.isnull().values.any())
             for idx2, row in dataset.iterrows():
                 if row['name'] not in self.word_mapping:
                     self.word_mapping[row['name']] = []
@@ -45,10 +44,10 @@ class FeatureBuilder:
         for word in self.train:
             mappings = self.word_mapping[word]
             for mapping in mappings:
-                sentence = [word,mapping]
+                sentence = [word]
             train_sentences.append(sentence)
 
-        self.feature_encoder = FastText(size=50, window=1, min_count=1,min_n=1,max_n=6)
+        self.feature_encoder = FastText(size=50, window=2, min_count=1,min_n=2,max_n=6)
         self.feature_encoder.build_vocab(sentences=train_sentences)
         self.feature_encoder.train(sentences=train_sentences, total_examples=self.feature_encoder.corpus_count, epochs=1000)
         self.feature_encoder.save('./models/fasttext.model')
@@ -57,6 +56,8 @@ class FeatureBuilder:
 
     def validate_encoder(self):
         test_words = self.validation
+
+        ## Finding the closest cluster center (Company, Location or Good)
         tp = 0
 
 
@@ -76,5 +77,58 @@ class FeatureBuilder:
 
         print('Closest cluster center validation approach accuracy:',str(tp/len(test_words)))
 
-featureBuilder = FeatureBuilder()
-featureBuilder.load_model()
+        ## Doing the K-nearest analysis
+        tp = 0
+
+        order_idx = {}
+        for idx,order in enumerate(self.ordering):
+            order_idx[order] = idx
+
+        for word in test_words:
+            distances = []
+            encoding = self.feature_encoder[word]
+            nearest_neighbours = self.feature_encoder.most_similar(word,topn=15)
+            votes = [0,0,0]
+
+            for neighbour in nearest_neighbours:
+                mappings = self.word_mapping[neighbour[0]]
+                for mapping in mappings:
+                    votes[order_idx[mapping]]+=1
+
+            assigned_idx = votes.index(max(votes))
+
+            gt_categories = self.word_mapping[word]
+            for gt_category in gt_categories:
+                if self.ordering[assigned_idx] == gt_category:
+                    tp += 1
+                    break
+
+        print('Nearest 15-Neighbour accuracy:', str(tp / len(test_words)))
+
+
+    def one_vs_rest_generator(self,positive_index=None):
+
+        assert positive_index is not None, "Requires index for the positive class(see ordering)"
+
+        X_train = []
+        y_train = []
+        X_test = []
+        y_test = []
+
+        for word in self.train:
+            X_train.append(self.feature_encoder[word])
+            if self.ordering[positive_index] in self.word_mapping[word]:
+                y_train.append(1)
+            else:
+                y_train.append(0)
+
+
+        for word in self.validation:
+            X_test.append(self.feature_encoder[word])
+            if self.ordering[positive_index] in self.word_mapping[word]:
+                y_test.append(1)
+            else:
+                y_test.append(0)
+
+        return np.asarray(X_train,dtype=np.float64),np.asarray(y_train,dtype=np.float64),\
+               np.asarray(X_test,dtype=np.float64),np.asarray(y_test,dtype=np.float64)
