@@ -19,6 +19,8 @@ classifier.load_classifiers()
 tp = 0
 fp = 0
 
+confidence_thresh = 0.1
+
 for word in features.validation:
     scores,assignments = classifier.one_vs_all_classification(word,features.ordering)
     class_assigned, mx_score = max(scores.items(),key=operator.itemgetter(1))
@@ -26,7 +28,7 @@ for word in features.validation:
     true_p = False
 
     for mapping in mappings:
-        if mapping == class_assigned and mx_score > 0.1:
+        if mapping == class_assigned and mx_score > confidence_thresh:
             tp += 1
             true_p = True
             break
