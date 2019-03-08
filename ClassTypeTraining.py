@@ -3,7 +3,7 @@ from FeatureBuilder import  FeatureBuilder
 import operator
 
 features = FeatureBuilder()
-features.load_data()
+features.load()
 features.load_model()
 
 
@@ -12,10 +12,10 @@ location_X_train, location_y_train,location_X_test, location_y_test = features.o
 goods_X_train, goods_y_train, goods_X_test, goods_y_test = features.one_vs_rest_generator(2)
 
 classifier = Classifier(features.company_feature_encoder,features.location_feature_encoder,features.goods_feature_encoder)
-classifier.load_classifiers()
-#classifier.fit_classifier('company',company_X_train,company_y_train)
-#classifier.fit_classifier('location',location_X_train,location_y_train)
-#classifier.fit_classifier('goods',goods_X_train,goods_y_train)
+#classifier.load_classifiers()
+classifier.fit_classifier('company',company_X_train,company_y_train)
+classifier.fit_classifier('location',location_X_train,location_y_train)
+classifier.fit_classifier('goods',goods_X_train,goods_y_train)
 tp = 0
 fp = 0
 

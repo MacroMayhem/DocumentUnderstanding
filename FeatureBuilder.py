@@ -18,7 +18,7 @@ class FeatureBuilder:
         self.location_feature_encoder = None
         self.goods_feature_encoder = None
 
-    def load_data(self):
+    def load(self):
         self.load_data()
 
     def load_model(self):
@@ -46,7 +46,7 @@ class FeatureBuilder:
                 self.word_mapping[row['name']].append(self.ordering[idx])
             self.sizes.append(dataset.shape[0])
             data += list(dataset['name'].values)
-        data = shuffle(data,random_state=0)
+        #data = shuffle(data,random_state=0)
         self.train, self.validation = train_test_split(data,random_state=0,test_size=0.2)
         print('Train Test Constructed')
 

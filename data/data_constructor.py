@@ -85,8 +85,8 @@ def get_location_data():
     city_names = pd.DataFrame(data['name']).sample(10000,random_state=0)
     city_names = city_names.rename(index=str,columns={"name":"name"})
 
-    country_names = data.drop_duplicates('country')
-    country_names = city_names.rename(index=str,columns={"country":"name"})
+    country_names = pd.DataFrame(data['country'].values,columns=['name'])
+    country_names.drop_duplicates(inplace=True)
 
     location = pd.concat([city_names,country_names],ignore_index=True)
     processed_locations = pd.DataFrame(columns = ['name'])

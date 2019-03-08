@@ -36,13 +36,25 @@ class Classifier:
             raise ImportError('Trained models not available.')
 
     def fit_classifier(self,classType,X,Y):
-        if classType == 'company':
-            self.company_classifier.fit(X,Y)
-        if classType == 'location':
-            self.location_classifier.fit(X,Y)
-        if classType == 'goods':
-            self.goods_classifier.fit(X,Y)
+        try:
+            from models.one_vs_rest_company import CompanyClassifier
+            from models.one_vs_rest_location import LocationClassifier
+            from models.one_vs_rest_goods import GoodsClassifier
 
+
+            if classType == 'company':
+                self.company_classifier = CompanyClassifier()
+                self.company_classifier.fit(X,Y)
+            if classType == 'location':
+
+                self.location_classifier = LocationClassifier()
+                self.location_classifier.fit(X,Y)
+            if classType == 'goods':
+
+                self.goods_classifier = GoodsClassifier()
+                self.goods_classifier.fit(X,Y)
+        except:
+            raise ImportError('Trained models not available.')
     def one_vs_all_classification(self,word,orderings):
 
         scores = {}
