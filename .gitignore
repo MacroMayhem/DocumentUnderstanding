@@ -3,3 +3,4 @@
 *.xlsx
 *.xslx
 *.model
+*.joblib
